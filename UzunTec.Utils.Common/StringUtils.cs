@@ -105,52 +105,7 @@ namespace UzunTec.Utils.Common
         {
             return value.ToUpper().Substring(0, 1) + value.ToLower().Substring(1);
         }
-
-        public static string PadronizaSeparadorDecimal(this string value)
-        {
-            string separadorDecimalPadrao = System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
-
-            value = value.Replace(".", separadorDecimalPadrao);
-            value = value.Replace(",", separadorDecimalPadrao);
-
-
-            string[] arr = value.Split(separadorDecimalPadrao.ToCharArray());
-
-            if (arr.Length > 1)
-            {
-                string parteDecimal = arr[arr.Length - 1];
-                arr[arr.Length - 1] = "";
-                value = String.Join("", arr) + separadorDecimalPadrao + parteDecimal;
-            }
-
-            return value;
-        }
-
-        public static string RemoveLetters(this string value)
-        {
-            char[] word = new char[value.Length];
-            string valor = "";
-            double aux;
-            word = value.ToCharArray();
-
-            for (int i = 0; i < word.Length; i++)
-            {
-                if (!valor.Contains(".") || !valor.Contains(","))
-                {
-                    if (word[i].Equals(',') || word[i].Equals('.'))
-                        valor += word[i];
-                    else if (Double.TryParse(word[i].ToString(), out aux))
-                        valor += aux.ToString();
-                }
-                else if (Double.TryParse(word[i].ToString(), out aux))
-                {
-                    valor += aux.ToString();
-                }
-            }
-
-            return valor;
-        }
-
+        
         public static bool IsValidEmail(this string login)
         {
             string regex = "^(?:" +
@@ -186,6 +141,53 @@ namespace UzunTec.Utils.Common
             Regex regexObj = new Regex(@"[^\d]");
             return regexObj.Replace(str, "");
         }
-                
+
+        public static decimal ParsePercentual(this string value, NumberStyles numberStyles, IFormatProvider provider)
+        {
+            if (value.Trim().EndsWith("%"))
+            {
+                return decimal.Parse(value.Replace("%", ""), numberStyles, provider) / 100M;
+            }
+            else
+            {
+                return decimal.Parse(value.Replace("%", ""), numberStyles, provider);
+            }
+        }
+
+
+        public static string ToNumericString(this string str, char decimalSeparator)
+        {
+            if (str == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            int decimalPlaces = 0;
+            bool bNegative = false;
+
+            // Remove unnecessary chars
+            Regex regexUnecessariedChars = new Regex(@"[^\d-+,]");
+            str = regexUnecessariedChars.Replace(str, "");
+
+            // Ignore sinal if wasn't the first char
+            bNegative = (str[0] == '-');
+
+            // Counting numbers after decimal separator
+            int commaIndex = str.LastIndexOf(decimalSeparator);
+            if (commaIndex > 0)
+            {
+                decimalPlaces = str.Substring(commaIndex).OnlyNumbers().Length;
+            }
+
+            // Remove non numbers
+            str = str.OnlyNumbers();
+
+            if (decimalPlaces > 0)
+            {
+                str = str.Substring(0, str.Length - decimalPlaces) + decimalSeparator + str.Substring(str.Length - decimalPlaces);
+            }
+
+            return ((bNegative) ? "-" : "") + str;
+        }
     }
 }
