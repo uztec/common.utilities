@@ -60,15 +60,11 @@ namespace UzunTec.Utils.Common
 
         public static TKey FirstKey<TKey, TValue>(this IDictionary<TKey, TValue> dic)
         {
-            TKey output = default(TKey);
             foreach (TKey key in dic.Keys)
             {
-                if (default(TKey).Equals(output))
-                {
-                    output = key;
-                }
+                return key;
             }
-            return output;
+            return default(TKey);
         }
 
         public static TKey LastKey<TKey, TValue>(this IDictionary<TKey, TValue> dic)
@@ -114,6 +110,35 @@ namespace UzunTec.Utils.Common
                 valueList.Add(val);
             }
             return output;
+        }
+
+        public static int CompareTo<T>(this IEnumerable<T> list1, IList<T> list2)
+        {
+            if (list1 == null || list2 == null)
+            {
+                return -1;
+            }
+
+            int i = 0;
+            foreach (T obj in list1)
+            {
+                if (list2.Count < (i + 1))
+                {
+                    return -1;
+                }
+
+                if (obj == null && list2[i] == null)
+                {
+                    continue;
+                }
+
+                if (!obj?.Equals(list2[i]) ?? false)
+                {
+                    return -1;
+                }
+                i++;
+            }
+            return i.CompareTo(list2.Count);
         }
     }
 }
