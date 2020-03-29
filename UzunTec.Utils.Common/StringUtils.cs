@@ -20,13 +20,13 @@ namespace UzunTec.Utils.Common
             {
                 char c = (char)(rnd.Next() % maxRand);
 
-                c += '0';  
+                c += '0';
                 if (c > '9')
                 {
-                    c += (char)('A' - '9');  
+                    c += (char)('A' - '9');
                     if (c > 'Z')
                     {
-                        c += (char)('a' - 'Z'); 
+                        c += (char)('a' - 'Z');
                     }
                 }
 
@@ -76,16 +76,18 @@ namespace UzunTec.Utils.Common
                     i += 2;
                 }
                 else
+                {
                     listBytesToEncode.Add((byte)str[i]);
+                }
             }
 
             return System.Text.Encoding.Default.GetString(listBytesToEncode.ToArray());
 
         }
 
-        public static string RemoveAccents(this string texto)
+        public static string RemoveAccents(this string value)
         {
-            string s = texto.Normalize(NormalizationForm.FormD);
+            string s = value.Normalize(NormalizationForm.FormD);
 
             StringBuilder sb = new StringBuilder();
 
@@ -105,8 +107,8 @@ namespace UzunTec.Utils.Common
         {
             return value.ToUpper().Substring(0, 1) + value.ToLower().Substring(1);
         }
-        
-        public static bool IsValidEmail(this string login)
+
+        public static bool IsValidEmail(this string value)
         {
             string regex = "^(?:" +
             "(\"\\s*(?:[^\"\\f\\n\\r\\t\\v\\b\\s]+\\s*)+\")|" +
@@ -118,28 +120,24 @@ namespace UzunTec.Utils.Common
             "\\.((?:([^- ])[-a-z]*[-a-z])?))" +
             "$";
 
-
-            Match matches = Regex.Match(login, regex);
-
-            if (matches.Success)
-                return true;
-            else
-                return false;
+            return Regex.Match(value, regex).Success;
         }
 
-        
-        public static string SimplifyString(this string str)
+
+        public static string SimplifyString(this string value)
         {
             foreach (char deletedChar in " -/\\\"\'")
-                str = str.Replace(deletedChar.ToString(), "");
+            {
+                value = value.Replace(deletedChar.ToString(), "");
+            }
 
-            return str.RemoveAccents().ToLower().Trim();
+            return value.RemoveAccents().ToLower().Trim();
         }
 
-        public static string OnlyNumbers(this string str)
+        public static string OnlyNumbers(this string value)
         {
             Regex regexObj = new Regex(@"[^\d]");
-            return regexObj.Replace(str, "");
+            return regexObj.Replace(value, "");
         }
 
         public static decimal ParsePercentual(this string value, NumberStyles numberStyles, IFormatProvider provider)
@@ -155,39 +153,44 @@ namespace UzunTec.Utils.Common
         }
 
 
-        public static string ToNumericString(this string str, char decimalSeparator)
+        public static string ToNumericString(this string value, char decimalSeparator)
         {
-            if (str == null)
+            if (value == null)
             {
                 throw new NullReferenceException();
             }
 
             int decimalPlaces = 0;
-            bool bNegative = false;
 
             // Remove unnecessary chars
-            Regex regexUnecessariedChars = new Regex(@"[^\d-+,]");
-            str = regexUnecessariedChars.Replace(str, "");
+            Regex regexUnecessariedChars = new Regex(@"[^\d\%\-\+" + decimalSeparator + "]");
+            value = regexUnecessariedChars.Replace(value, "");
+
+            if (value == "")    // Protection
+            {
+                return "";
+            }
 
             // Ignore sinal if wasn't the first char
-            bNegative = (str[0] == '-');
+            bool bNegative = (value[0] == '-');
+            bool bPercentual = (value[value.Length - 1] == '%');
 
             // Counting numbers after decimal separator
-            int commaIndex = str.LastIndexOf(decimalSeparator);
+            int commaIndex = value.LastIndexOf(decimalSeparator);
             if (commaIndex > 0)
             {
-                decimalPlaces = str.Substring(commaIndex).OnlyNumbers().Length;
+                decimalPlaces = value.Substring(commaIndex).OnlyNumbers().Length;
             }
 
             // Remove non numbers
-            str = str.OnlyNumbers();
+            value = value.OnlyNumbers();
 
             if (decimalPlaces > 0)
             {
-                str = str.Substring(0, str.Length - decimalPlaces) + decimalSeparator + str.Substring(str.Length - decimalPlaces);
+                value = value.Substring(0, value.Length - decimalPlaces) + decimalSeparator + value.Substring(value.Length - decimalPlaces);
             }
 
-            return ((bNegative) ? "-" : "") + str;
+            return ((bNegative) ? "-" : "") + value + ((bPercentual) ? "%" : "");
         }
     }
 }
