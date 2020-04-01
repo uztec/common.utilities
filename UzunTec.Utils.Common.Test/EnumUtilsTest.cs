@@ -30,6 +30,10 @@ namespace UzunTec.Utils.Common.Test
         {
             return new List<object[]>
             {
+                new object[] { typeof(Status), null, true, null},
+                new object[] { typeof(Status), null, false, null},
+                new object[] { typeof(Sides), null, false, null},
+                new object[] { typeof(Profiences), null, false, null},
                 new object[] { typeof(Status), "Inactive", true, Status.Inactive},
                 new object[] { typeof(Status), "Active", true, Status.Active},
                 new object[] { typeof(Status), "Overload", true, Status.Overload},
@@ -91,6 +95,8 @@ namespace UzunTec.Utils.Common.Test
         {
             return new List<object[]>
             {
+                new object[] { null, true, null},
+                new object[] { null, false, null},
                 new object[] { "Inactive", true, Status.Inactive},
                 new object[] { "Active", true, Status.Active},
                 new object[] { "Overload", true, Status.Overload},
