@@ -8,6 +8,18 @@ namespace UzunTec.Utils.Common
 {
     public static class StringUtils
     {
+        public static string ReplaceFirstOccurrence(this string text, string toFind, string replace, StringComparison comparison = StringComparison.CurrentCulture)
+        {
+            int place = text.IndexOf(toFind, comparison);
+            return text.Remove(place, toFind.Length).Insert(place, replace);
+        }
+
+        public static string ReplaceLastOccurrence(this string text, string toFind, string replace, StringComparison comparison = StringComparison.CurrentCulture)
+        {
+            int place = text.LastIndexOf(toFind, comparison);
+            return text.Remove(place, toFind.Length).Insert(place, replace);
+        }
+
         public static string GenerateRandomString(int size)
         {
             const int maxRand = ('z' - 'a') + ('9' - '0') + ('Z' - 'A') + 1;
