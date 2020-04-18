@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UzunTec.Utils.Common
 {
     public static class ListUtils
     {
-        public static IList ToBindingList<Tkey, TValue>(this IDictionary<Tkey, TValue> dic)
-        {
-            return new List<KeyValuePair<Tkey, TValue>>(dic);
-        }
-
         public static List<T> Filter<T>(this IEnumerable<T> list, Predicate<T> match)
         {
             List<T> output = new List<T>();
@@ -24,57 +18,50 @@ namespace UzunTec.Utils.Common
             return output;
         }
 
-
-        public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key, TValue value)
+        public static T Max<T>(this IEnumerable<T> list) where T : struct, IComparable<T>
         {
-            if (dic.ContainsKey(key))
-            {
-                dic[key] = value;
-            }
-            else
-            {
-                dic.Add(key, value);
-            }
+            bool bAssigned = false;
+            T output = default(T);
 
-        }
-
-        public static void AddOrIgnore<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key, TValue value)
-        {
-            if (!dic.ContainsKey(key))
+            foreach (T obj in list)
             {
-                dic.Add(key, value);
-            }
-        }
-
-        public static TKey GetKeyOfValue<TKey, TValue>(this IDictionary<TKey, TValue> dic, TValue value)
-        {
-            foreach (TKey k in dic.Keys)
-            {
-                if (dic[k].Equals(value))
+                if (bAssigned)
                 {
-                    return k;
+                    if (obj.CompareTo(output) > 0)
+                    {
+                        output = obj;
+                    }
+                }
+                else
+                {
+                    output = obj;
+                    bAssigned = true;
                 }
             }
-            throw new KeyNotFoundException();
+            return output;
         }
 
-        public static TKey FirstKey<TKey, TValue>(this IDictionary<TKey, TValue> dic)
+        public static T Min<T>(this IEnumerable<T> list) where T : struct, IComparable<T>
         {
-            foreach (TKey key in dic.Keys)
-            {
-                return key;
-            }
-            return default(TKey);
-        }
+            bool bAssigned = false;
+            T output = default(T);
 
-        public static TKey LastKey<TKey, TValue>(this IDictionary<TKey, TValue> dic)
-        {
-            TKey lastKey = default(TKey);
-            foreach (TKey key in dic.Keys)
+            foreach (T obj in list)
             {
-                lastKey = key;
+                if (bAssigned)
+                {
+                    if (obj.CompareTo(output) < 0)
+                    {
+                        output = obj;
+                    }
+                }
+                else
+                {
+                    output = obj;
+                    bAssigned = true;
+                }
             }
-            return lastKey;
+            return output;
         }
 
         public static IList<T> ConcatList<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
