@@ -4,12 +4,23 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
 	<PackageId>UzunTec.Utils.Common</PackageId>
-	<Version>0.1.0</Version>
+	<Version>0.1.1</Version>
 	<Authors>Uzun Technology</Authors>
 	<Company>Uzun Technology</Company>
-	<RepositoryUrl>https://github.com/uztec/dotnet.utilities.git</RepositoryUrl> 
+	<RepositoryUrl>https://github.com/uztec/common.utilities</RepositoryUrl> 
 	<RepositoryType>git</RepositoryType> 
-	<GeneratePackageOnBuild>false</GeneratePackageOnBuild> 
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild> 
+	<Copyright>© 2019 Uzun Techonology</Copyright> 
+	<OutputType>Library</OutputType> 
+	<PackageTags>Utils Utilities StringUtils ListUtils DateTimeUtils EnumUtils MD5</PackageTags> 
+	<PackageIcon>dot-net-utils-uztec.png</PackageIcon> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="dot-net-utils-uztec.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
