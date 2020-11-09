@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace UzunTec.Utils.Common
@@ -56,9 +57,66 @@ namespace UzunTec.Utils.Common
             return lastKey;
         }
 
-        public static IList ToBindingList<Tkey, TValue>(this IDictionary<Tkey, TValue> dic)
+        public static IList ToBindingList<TKey, TValue>(this IDictionary<TKey, TValue> dic)
         {
-            return new List<KeyValuePair<Tkey, TValue>>(dic);
+            return new List<KeyValuePair<TKey, TValue>>(dic);
+        }
+
+        public static int CompareDictionary<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> dic, bool ignoreOrder = false)
+            where TKey : IComparable
+            where TValue : IComparable
+        {
+            if (source == null)
+            {
+                return (dic == null) ? 0 : -1;
+            }
+            else if (dic == null)
+            {
+                return 1;
+            }
+
+            int countCompare = source.Count.CompareTo(dic.Count);
+            return (countCompare != 0) ? countCompare :
+                (ignoreOrder) ? source.CompareDictionaryItemsIgnoreOrder(dic) :
+                source.CompareDictionaryItemsSameOrder(dic);
+        }
+
+        private static int CompareDictionaryItemsSameOrder<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> dic)
+            where TKey : IComparable
+            where TValue : IComparable
+        {
+            List<TKey> dicKeyList = new List<TKey>(dic.Keys);
+            int keyCompare = source.Keys.CompareList(dicKeyList, false);
+
+            if (keyCompare == 0)
+            {
+                List<TValue> dicValueList = new List<TValue>(dic.Values);
+                return source.Values.CompareList(dicValueList);
+            }
+
+            return keyCompare;
+        }
+
+        private static int CompareDictionaryItemsIgnoreOrder<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> dic)
+            where TKey : IComparable
+            where TValue : IComparable
+        {
+            foreach (TKey k in source.Keys)
+            {
+                if (dic.TryGetValue(k, out TValue v))
+                {
+                    int valueCompare = v.CompareTo(source[k]);
+                    if (valueCompare != 0)
+                    {
+                        return valueCompare;
+                    }
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            return 0;
         }
     }
 }

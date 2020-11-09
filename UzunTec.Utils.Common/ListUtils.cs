@@ -99,13 +99,31 @@ namespace UzunTec.Utils.Common
             return output;
         }
 
-        public static int CompareTo<T>(this IEnumerable<T> list1, IList<T> list2)
+        public static int CompareList<T>(this IEnumerable<T> list1, IList<T> list2, bool ignoreOrder = false)
+            where T : IComparable
         {
-            if (list1 == null || list2 == null)
-            {
-                return -1;
-            }
+            return (list1 == null) ? ((list2 == null) ? 0 : -1) : (list2 == null) ? 1 :
+                (ignoreOrder) ? list1.CompareListItemsIgnoreOrder(list2) :
+                list1.CompareListItemsSameOrder(list2);
+        }
 
+        public static int CompareListItemsIgnoreOrder<T>(this IEnumerable<T> list1, IList<T> list2)
+             where T : IComparable
+        {
+            int i = 0;
+            foreach (T obj in list1)
+            {
+                if (!list2.Contains(obj))
+                {
+                    return -1;
+                }
+                i++;
+            }
+            return i.CompareTo(list2.Count);
+        }
+        public static int CompareListItemsSameOrder<T>(this IEnumerable<T> list1, IList<T> list2)
+                where T : IComparable
+        {
             int i = 0;
             foreach (T obj in list1)
             {
@@ -119,9 +137,10 @@ namespace UzunTec.Utils.Common
                     continue;
                 }
 
-                if (!obj?.Equals(list2[i]) ?? false)
+                int itemCompare = obj?.CompareTo(list2[i]) ?? -1;
+                if (itemCompare != 0)
                 {
-                    return -1;
+                    return itemCompare;
                 }
                 i++;
             }
