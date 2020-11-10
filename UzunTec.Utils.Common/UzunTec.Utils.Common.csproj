@@ -10,7 +10,7 @@
 	<RepositoryUrl>https://github.com/uztec/common.utilities</RepositoryUrl> 
 	<RepositoryType>git</RepositoryType> 
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild> 
-	<Copyright>© 2019 Uzun Techonology</Copyright> 
+	<Copyright>© 2019 Uzun Technology</Copyright> 
 	<OutputType>Library</OutputType> 
 	<PackageTags>Utils Utilities StringUtils ListUtils DateTimeUtils EnumUtils MD5</PackageTags> 
 	<PackageIcon>dot-net-utils-uztec.png</PackageIcon> 
