@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
 	<PackageId>UzunTec.Utils.Common</PackageId>
-	<Version>0.1.1</Version>
+	<Version>0.2.1</Version>
 	<Authors>Uzun Technology</Authors>
 	<Company>Uzun Technology</Company>
 	<RepositoryUrl>https://github.com/uztec/common.utilities</RepositoryUrl> 
