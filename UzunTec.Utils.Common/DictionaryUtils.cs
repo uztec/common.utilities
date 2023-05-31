@@ -118,5 +118,32 @@ namespace UzunTec.Utils.Common
             }
             return 0;
         }
+
+        public static void AddRangeOverrideExisiting<TKey, TValue>(this IDictionary<TKey, TValue> dic, IDictionary<TKey, TValue> dicToAdd)
+        {
+            dicToAdd.ForEach(x => dic.AddOrUpdate(x.Key, x.Value));
+        }
+
+        public static void AddRangeIgnoreExisting<TKey, TValue>(this IDictionary<TKey, TValue> dic, IDictionary<TKey, TValue> dicToAdd)
+        {
+            dicToAdd.ForEach(x => dic.AddOrIgnore(x.Key, x.Value));
+
+        }
+
+        public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> dic, IDictionary<TKey, TValue> dicToAdd)
+        {
+            dicToAdd.ForEach(x => dic.Add(x.Key, x.Value));
+        }
+
+        public static bool ContainsKeys<TKey, TValue>(this IDictionary<TKey, TValue> dic, IEnumerable<TKey> keys)
+        {
+            bool result = false;
+            keys.ForEachOrBreak((x) => 
+            { 
+                result = dic.ContainsKey(x); 
+                return result;
+            });
+            return result;
+        }
     }
 }
