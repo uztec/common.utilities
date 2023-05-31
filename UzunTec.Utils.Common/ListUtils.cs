@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UzunTec.Utils.Common
 {
@@ -145,6 +146,73 @@ namespace UzunTec.Utils.Common
                 i++;
             }
             return i.CompareTo(list2.Count);
+        }
+               
+        public static List<List<T>> Page<T>(this List<T> list, int pageSize)
+        {
+            List<List<T>> pagedList = new List<List<T>>();
+            int pages = list.Count / pageSize;
+            for (int page = 0; page < pages; page++)
+            {
+                pagedList.Add(list.GetRange(page * pageSize, pageSize));
+            }
+            int lastPageSize = list.Count - (pages * pageSize);
+            if (lastPageSize > 0)
+            {
+                pagedList.Add(list.GetRange(pages * pageSize, lastPageSize ));
+            }
+            return pagedList;
+        }
+
+        public static List<List<T>> Page<T>(this IEnumerable<T> list, int pageSize)
+        {
+            List<List<T>> pagedList = new List<List<T>>();
+            int pages = list.Count() / pageSize;
+            for (int page = 0; page < pages; page++)
+            {
+                pagedList.Add(new List<T>(list.Skip(page * pageSize).Take(pageSize)));
+            }
+            int lastPageSize = list.Count() - (pages * pageSize);
+            if (lastPageSize > 0)
+            {
+                pagedList.Add(new List<T>(list.Skip(pages * pageSize).Take(lastPageSize)));
+            }
+            return pagedList;
+        }
+
+        public static List<TOutput> Extract<TList, TOutput >(this IEnumerable<TList> list, Func<TList, TOutput> func)
+        {
+            List<TOutput> output = new List<TOutput>();
+            foreach (TList item in list)
+            {
+                output.Add(func(item));
+            }
+            return output;
+        }
+
+        public static HashSet<TOutput> ExtractDistinct<TList, TOutput>(this IEnumerable<TList> list, Func<TList, TOutput> func)
+        {
+            HashSet<TOutput> output = new HashSet<TOutput>();
+            foreach (TList item in list)
+            {
+                output.Add(func(item));
+            }
+            return output;
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (T item in source)
+                action(item);
+        }
+
+        public static void ForEachOrBreak<T>(this IEnumerable<T> source, Func<T, bool> func)
+        {
+            foreach (var item in source)
+            {
+                bool result = func(item);
+                if (result) break;
+            }
         }
     }
 }
