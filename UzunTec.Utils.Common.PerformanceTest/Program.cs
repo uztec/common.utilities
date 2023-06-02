@@ -7,4 +7,5 @@ Console.WriteLine("Hello, World!");
 //var dt = DateTimeUtils.RandomDate(DateTime.MinValue, DateTime.MaxValue);
 
 //ExtractPerformanceTest.Run();
-PageListPerformanceTest.Run();
+//PageListPerformanceTest.Run();
+SubractListPerformanceTest.Run();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace UzunTec.Utils.Common
 {
@@ -213,6 +214,66 @@ namespace UzunTec.Utils.Common
                 bool result = func(item);
                 if (result) break;
             }
+        }
+
+        public static List<T> SubtractList<T>(this IEnumerable<T> baseList, IEnumerable<T> listToSubtract, Func<T, int, object> getHashFunction, int level = 1)
+        {
+            long effort = (long) baseList.Count() * listToSubtract.Count();
+
+            if (effort < 1000000000)
+            {
+                return SubtractListAux(baseList, listToSubtract, getHashFunction, level + 1);
+            }
+
+            List<T> output = new List<T>();
+            IDictionary<object, List<T>> baseListWithHashing = baseList.DivideByGroup((o) => getHashFunction(o, level));
+            IDictionary<object, List<T>> listToSubractWithHashing = listToSubtract.DivideByGroup((o) => getHashFunction(o, level));
+
+            foreach (object key in baseListWithHashing.Keys)
+            {
+                if (listToSubractWithHashing.ContainsKey(key))
+                {
+                    output.AddRange(SubtractList(baseListWithHashing[key], listToSubractWithHashing[key], getHashFunction, level + 1));
+                }
+                else
+                {
+                    output.AddRange(baseListWithHashing[key]);
+                }
+            }
+            return output;
+        }
+
+        public static List<T> SubtractList<T>(this IEnumerable<T> baseList, IEnumerable<T> listToSubtract)
+        {
+            List<T> output = new List<T>();
+            foreach (T value in baseList)
+            {
+                if (!listToSubtract.Contains(value))
+                {
+                    output.Add(value);
+                }
+            }
+            return output;
+        }
+
+        public static List<string> SubtractList(this IEnumerable<string> baseList, IEnumerable<string> listToSubtract)
+        {
+            return SubtractList(baseList, listToSubtract, (o, l) => o.PadRight(l).Substring(0, l));
+        }
+
+        private static List<T> SubtractListAux<T>(this IEnumerable<T> baseList, IEnumerable<T> listToSubtract, Func<T, int, object> getHashFunction, int level)
+        {
+            List<T> output = new List<T>();
+            IDictionary<object, List<T>> listToSubractWithHashing = listToSubtract.DivideByGroup((o) => getHashFunction(o, level));
+            foreach (T value in baseList)
+            {
+                object hashKey = getHashFunction(value, level);
+                if (!listToSubractWithHashing.ContainsKey(hashKey) || !listToSubractWithHashing[hashKey].Contains(value))
+                {
+                    output.Add(value);
+                }
+            }
+            return output;
         }
     }
 }
