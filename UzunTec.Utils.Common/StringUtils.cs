@@ -204,5 +204,28 @@ namespace UzunTec.Utils.Common
 
             return ((bNegative) ? "-" : "") + value + ((bPercentual) ? "%" : "");
         }
+
+
+        /// <summary>
+        /// Checks if a string is wrapped with quotes and adds them if missing.
+        /// </summary>
+        /// <param name="input">The input string to check</param>
+        /// <returns>The string wrapped with quotes</returns>
+        public static string EnsureQuotes(this string input, char quoteChar='"', string defaultIfEmpty = "\"\"")
+        {
+            if (string.IsNullOrEmpty(input))
+                return defaultIfEmpty;
+
+            // Check if the string starts and ends with double quotes
+            bool hasStartingQuote = input[0] == quoteChar;
+            bool hasEndingQuote = input[input.Length-1]==quoteChar;
+
+            // If both quotes are present, return the original string
+            if (hasStartingQuote && hasEndingQuote)
+                return input;
+
+            // If only one quote is missing or both are missing, wrap with quotes
+            return $"{quoteChar}{input.Trim('\"')}{quoteChar}";
+        }
     }
 }
